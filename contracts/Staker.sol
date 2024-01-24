@@ -3,7 +3,9 @@
 
 pragma solidity ^0.8.0;
 
-contract Staker {
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract Staker is Initializable {
     // An address type variable is used to store ethereum accounts.
     address public admin;
     mapping(address => bool) public isHandler;
@@ -33,7 +35,7 @@ contract Staker {
         _;
     }
 
-    constructor() {
+    function initialize() public initializer {
         admin = msg.sender;
         isHandler[msg.sender] = true;
     }

@@ -2,9 +2,10 @@ const {
   loadFixture,
 } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
-import { ethers, network } from "hardhat";
+import { ethers, network, upgrades } from "hardhat";
 import { generateStakerSignature } from "../scripts/utils/utils";
 import { ZeroAddress } from "ethers";
+import { Staker } from "../typechain";
 
 const testAtlanticAddress = "dfabGCMsPPryBnXEkJK64wx5VDRFb1YM5DXxEyinZHrQ1qbHB";
 
@@ -12,7 +13,12 @@ describe("Staker Bind", function () {
   async function deployStaker() {
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
-    const hardhatStaker = await ethers.deployContract("Staker");
+    const StakerFactory = await ethers.getContractFactory("Staker");
+    const hardhatStaker = (await upgrades.deployProxy(StakerFactory, [], {
+      initializer: "initialize",
+    })) as any as Staker;
+
+    await hardhatStaker.waitForDeployment();
 
     // Fixtures can return anything you consider useful for your tests
     return { hardhatStaker, owner, addr1, addr2, addr3 };
