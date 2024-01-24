@@ -154,14 +154,14 @@ contract StakerBind {
     // query bound relations by atlantic address
     function getRecordByAtlanticAddress(
         string memory atlanticAddress
-    ) external view returns (address) {
+    ) public view returns (address) {
         return atlanticAddressToPacificAddress[atlanticAddress];
     }
 
     // query account nonceby atlantic address
     function getNonceByAtlanticAddress(
         string memory atlanticAddress
-    ) external view returns (uint32) {
+    ) public view returns (uint32) {
         return atlanticAddressNonce[atlanticAddress];
     }
 }
