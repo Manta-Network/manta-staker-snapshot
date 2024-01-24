@@ -1,6 +1,9 @@
 import { keccak256, Signature, solidityPacked } from "ethers";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { ethers } from "hardhat";
+import { HardhatEthersProvider } from "@nomicfoundation/hardhat-ethers/internal/hardhat-ethers-provider";
+import { ethers, run } from "hardhat";
+const fs = require("fs");
+const path = require("path");
 
 /**
  *
@@ -60,4 +63,67 @@ function getDomainSeparator(chainId: number, contractAddress: string) {
       [DOMAIN_SEPARATOR_TYPEHASH, chainId, contractAddress]
     )
   );
+}
+
+export async function contractAt(
+  name: string,
+  address: string,
+  provider: HardhatEthersProvider | HardhatEthersSigner,
+  options?: any
+) {
+  let contractFactory = await ethers.getContractFactory(name, options);
+  if (provider) {
+    contractFactory = contractFactory.connect(provider);
+  }
+  return await contractFactory.attach(address);
+}
+
+const contractAddressesFilepath = path.join(
+  __dirname,
+  "..",
+  "..",
+  "contractAddress",
+  `contract-addresses-${process.env.HARDHAT_NETWORK || "local"}.json`
+);
+
+export async function readContractAddress() {
+  if (fs.existsSync(contractAddressesFilepath)) {
+    return JSON.parse(fs.readFileSync(contractAddressesFilepath));
+  }
+  return {};
+}
+
+export async function sendTxn(txnPromise: any, label?: string) {
+  const txn = await txnPromise;
+  console.info(`Sending ${label}...`);
+  await txn.wait(1);
+  console.info(`... Sent! ${txn.hash}`);
+  return txn;
+}
+
+export async function verifyContract(contractAddress: string, args: any[]) {
+  await callWithRetries(run, [
+    "verify:verify",
+    {
+      address: contractAddress,
+      constructorArguments: args,
+    },
+  ]);
+}
+
+async function callWithRetries(func: any, args: any[], retriesCount = 3) {
+  let i = 0;
+  while (true) {
+    i++;
+    try {
+      return await func(...args);
+    } catch (ex: any) {
+      if (i === retriesCount) {
+        console.error("call failed %s times. throwing error", retriesCount);
+        throw ex;
+      }
+      console.error("call i=%s failed. retrying....", i);
+      console.error(ex.message);
+    }
+  }
 }
