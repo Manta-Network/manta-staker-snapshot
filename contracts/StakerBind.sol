@@ -8,10 +8,6 @@ contract StakerBind {
     address public admin;
     mapping(address => bool) public isHandler;
 
-    struct AtlanticAddress {
-        string atlanticAddress;
-    }
-
     // atlantic address => pacific address
     mapping(string => address) atlanticAddressToPacificAddress;
 
@@ -23,7 +19,7 @@ contract StakerBind {
 
     // bind event
     event BindPacificAddress(
-        string indexed AtlanticAddress,
+        string indexed atlanticAddress,
         address indexed pacificAddress
     );
 
