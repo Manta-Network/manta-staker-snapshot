@@ -2,75 +2,81 @@ const {
   loadFixture,
 } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { expect } = require("chai");
-import { ethers, network } from "hardhat";
-import { generateStakerBindSignature } from "../scripts/utils/utils";
+import { ethers, network, upgrades } from "hardhat";
+import { generateStakerSignature } from "../scripts/utils/utils";
 import { ZeroAddress } from "ethers";
+import { Staker } from "../typechain";
 
 const testAtlanticAddress = "dfabGCMsPPryBnXEkJK64wx5VDRFb1YM5DXxEyinZHrQ1qbHB";
 
-describe("Staker Bind", function () {
-  async function deployStakerBind() {
+describe("Staker Contract", function () {
+  async function deployStaker() {
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
-    const hardhatStakerBind = await ethers.deployContract("StakerBind");
+    const StakerFactory = await ethers.getContractFactory("Staker");
+    const hardhatStaker = (await upgrades.deployProxy(StakerFactory, [], {
+      initializer: "initialize",
+    })) as any as Staker;
+
+    await hardhatStaker.waitForDeployment();
 
     // Fixtures can return anything you consider useful for your tests
-    return { hardhatStakerBind, owner, addr1, addr2, addr3 };
+    return { hardhatStaker, owner, addr1, addr2, addr3 };
   }
 
   it("set admin, handler zero address check", async function () {
-    const { hardhatStakerBind, owner, addr1, addr2 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
+      deployStaker
     );
 
-    await expect(
-      hardhatStakerBind.connect(owner).setAdmin(ZeroAddress)
-    ).to.be.revertedWith("StakerBind: invalid new admin");
+    expect(await hardhatStaker.admin()).to.be.equal(owner.address);
 
     await expect(
-      hardhatStakerBind.connect(owner).setHandler(ZeroAddress, true)
-    ).to.be.revertedWith("StakerBind: invalid handler");
+      hardhatStaker.connect(owner).setAdmin(ZeroAddress)
+    ).to.be.revertedWith("Staker: invalid new admin");
+
+    await expect(
+      hardhatStaker.connect(owner).setHandler(ZeroAddress, true)
+    ).to.be.revertedWith("Staker: invalid handler");
   });
 
   it("should fail if sender is not handler", async function () {
     // We use loadFixture to setup our environment, and then assert that
     // things went well
-    const { hardhatStakerBind, owner, addr1, addr2 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
+      deployStaker
     );
 
     // set handlers
     await expect(
-      hardhatStakerBind.connect(addr1).setHandler(addr1.address, true)
-    ).to.be.revertedWith("StakerBind: Only Admin");
+      hardhatStaker.connect(addr1).setHandler(addr1.address, true)
+    ).to.be.revertedWith("Staker: Only Admin");
 
-    await expect(
-      hardhatStakerBind.connect(owner).setHandler(addr1.address, true)
-    ).to.not.be.reverted;
+    await expect(hardhatStaker.connect(owner).setHandler(addr1.address, true))
+      .to.not.be.reverted;
   });
 
   it("only handler can sign claim treasure nft signature", async function () {
-    const { hardhatStakerBind, owner, addr1, addr2 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
+      deployStaker
     );
 
-    await hardhatStakerBind.connect(owner).setHandler(addr1.address, true);
+    await hardhatStaker.connect(owner).setHandler(addr1.address, true);
 
     // generate signature
     const { atlanticAddress, pacificAddress, nonce, sig } =
-      await generateStakerBindSignature(
+      await generateStakerSignature(
         addr2,
         testAtlanticAddress,
         addr2.address,
-        Number(
-          await hardhatStakerBind.getNonceByAtlanticAddress(addr2.address)
-        ) + 1,
+        Number(await hardhatStaker.getNonceByAtlanticAddress(addr2.address)) +
+          1,
         network.config.chainId as number,
-        await hardhatStakerBind.getAddress()
+        await hardhatStaker.getAddress()
       );
 
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           atlanticAddress,
@@ -80,32 +86,32 @@ describe("Staker Bind", function () {
           sig.r,
           sig.s
         )
-    ).to.be.revertedWith("StakerBind: Only handler can sign the signature");
+    ).to.be.revertedWith("Staker: Only handler can sign the signature");
   });
 
   it("should be able to bind pacific addresses", async function () {
-    const { hardhatStakerBind, owner, addr1, addr2 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
+      deployStaker
     );
 
-    await hardhatStakerBind.connect(owner).setHandler(addr1.address, true);
+    await hardhatStaker.connect(owner).setHandler(addr1.address, true);
 
     // generate signature
     const { atlanticAddress, pacificAddress, nonce, sig } =
-      await generateStakerBindSignature(
+      await generateStakerSignature(
         addr1,
         testAtlanticAddress,
         addr2.address,
         Number(
-          await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+          await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
         ) + 1,
         network.config.chainId as number,
-        await hardhatStakerBind.getAddress()
+        await hardhatStaker.getAddress()
       );
 
     // bind pacific address
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           atlanticAddress,
@@ -119,36 +125,36 @@ describe("Staker Bind", function () {
 
     // verify contract state
     expect(
-      await hardhatStakerBind.getRecordByAtlanticAddress(testAtlanticAddress)
+      await hardhatStaker.getRecordByAtlanticAddress(testAtlanticAddress)
     ).to.be.equal(addr2.address);
     expect(
-      await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+      await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
     ).to.be.equal(1);
   });
 
   it("should fail if nonce is not updated", async function () {
-    const { hardhatStakerBind, owner, addr1, addr2 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
+      deployStaker
     );
 
-    await hardhatStakerBind.connect(owner).setHandler(addr1.address, true);
+    await hardhatStaker.connect(owner).setHandler(addr1.address, true);
 
     // generate signature
     const { atlanticAddress, pacificAddress, nonce, sig } =
-      await generateStakerBindSignature(
+      await generateStakerSignature(
         addr1,
         testAtlanticAddress,
         addr2.address,
         Number(
-          await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+          await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
         ) + 1,
         network.config.chainId as number,
-        await hardhatStakerBind.getAddress()
+        await hardhatStaker.getAddress()
       );
 
     // bind pacific address
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           atlanticAddress,
@@ -161,7 +167,7 @@ describe("Staker Bind", function () {
     ).to.not.be.reverted;
 
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           atlanticAddress,
@@ -171,32 +177,32 @@ describe("Staker Bind", function () {
           sig.r,
           sig.s
         )
-    ).to.be.revertedWith("StakerBind: The nonce is expired");
+    ).to.be.revertedWith("Staker: The nonce is expired");
   });
 
   it("should be able to update pacific address", async function () {
-    const { hardhatStakerBind, owner, addr1, addr2, addr3 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2, addr3 } = await loadFixture(
+      deployStaker
     );
 
-    await hardhatStakerBind.connect(owner).setHandler(addr1.address, true);
+    await hardhatStaker.connect(owner).setHandler(addr1.address, true);
 
     // generate signature
     const { atlanticAddress, pacificAddress, nonce, sig } =
-      await generateStakerBindSignature(
+      await generateStakerSignature(
         addr1,
         testAtlanticAddress,
         addr2.address,
         Number(
-          await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+          await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
         ) + 1,
         network.config.chainId as number,
-        await hardhatStakerBind.getAddress()
+        await hardhatStaker.getAddress()
       );
 
     // bind pacific address
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           atlanticAddress,
@@ -211,20 +217,20 @@ describe("Staker Bind", function () {
     ///////////////////////////////////////////////////
     // bind address again
     // generate signature
-    const newSignature = await generateStakerBindSignature(
+    const newSignature = await generateStakerSignature(
       addr1,
       testAtlanticAddress,
       addr3.address,
       Number(
-        await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+        await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
       ) + 1,
       network.config.chainId as number,
-      await hardhatStakerBind.getAddress()
+      await hardhatStaker.getAddress()
     );
 
     // bind pacific address
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           newSignature.atlanticAddress,
@@ -238,40 +244,40 @@ describe("Staker Bind", function () {
 
     // verify contract state
     expect(
-      await hardhatStakerBind.getRecordByAtlanticAddress(
+      await hardhatStaker.getRecordByAtlanticAddress(
         newSignature.atlanticAddress
       )
     ).to.be.equal(addr3.address);
     expect(
-      await hardhatStakerBind.getNonceByAtlanticAddress(
+      await hardhatStaker.getNonceByAtlanticAddress(
         newSignature.atlanticAddress
       )
     ).to.be.equal(2);
   });
 
   it("should be able to unbind pacific addresses", async function () {
-    const { hardhatStakerBind, owner, addr1, addr2 } = await loadFixture(
-      deployStakerBind
+    const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
+      deployStaker
     );
 
-    await hardhatStakerBind.connect(owner).setHandler(addr1.address, true);
+    await hardhatStaker.connect(owner).setHandler(addr1.address, true);
 
     // generate signature
     const { atlanticAddress, pacificAddress, nonce, sig } =
-      await generateStakerBindSignature(
+      await generateStakerSignature(
         addr1,
         testAtlanticAddress,
         addr2.address,
         Number(
-          await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+          await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
         ) + 1,
         network.config.chainId as number,
-        await hardhatStakerBind.getAddress()
+        await hardhatStaker.getAddress()
       );
 
     // bind pacific address
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           atlanticAddress,
@@ -285,29 +291,29 @@ describe("Staker Bind", function () {
 
     // verify contract state
     expect(
-      await hardhatStakerBind.getRecordByAtlanticAddress(testAtlanticAddress)
+      await hardhatStaker.getRecordByAtlanticAddress(testAtlanticAddress)
     ).to.be.equal(addr2.address);
     expect(
-      await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+      await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
     ).to.be.equal(1);
 
     ///////////////////////////////////////////////////
     // unbind address
     // generate signature
-    const newSignature = await generateStakerBindSignature(
+    const newSignature = await generateStakerSignature(
       addr1,
       testAtlanticAddress,
       ZeroAddress,
       Number(
-        await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+        await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
       ) + 1,
       network.config.chainId as number,
-      await hardhatStakerBind.getAddress()
+      await hardhatStaker.getAddress()
     );
 
     // bind pacific address
     await expect(
-      hardhatStakerBind
+      hardhatStaker
         .connect(addr2)
         .bindPacificAddress(
           newSignature.atlanticAddress,
@@ -321,10 +327,10 @@ describe("Staker Bind", function () {
 
     // verify contract state
     expect(
-      await hardhatStakerBind.getRecordByAtlanticAddress(testAtlanticAddress)
+      await hardhatStaker.getRecordByAtlanticAddress(testAtlanticAddress)
     ).to.be.equal(ZeroAddress);
     expect(
-      await hardhatStakerBind.getNonceByAtlanticAddress(testAtlanticAddress)
+      await hardhatStaker.getNonceByAtlanticAddress(testAtlanticAddress)
     ).to.be.equal(2);
   });
 });

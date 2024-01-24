@@ -3,14 +3,12 @@
 
 pragma solidity ^0.8.0;
 
-contract StakerBind {
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+contract Staker is Initializable {
     // An address type variable is used to store ethereum accounts.
     address public admin;
     mapping(address => bool) public isHandler;
-
-    struct AtlanticAddress {
-        string atlanticAddress;
-    }
 
     // atlantic address => pacific address
     mapping(string => address) atlanticAddressToPacificAddress;
@@ -23,21 +21,26 @@ contract StakerBind {
 
     // bind event
     event BindPacificAddress(
-        string indexed AtlanticAddress,
+        string indexed atlanticAddress,
         address indexed pacificAddress
     );
 
     modifier onlyAdmin() {
-        require(admin == msg.sender, "StakerBind: Only Admin");
+        require(admin == msg.sender, "Staker: Only Admin");
         _;
     }
 
     modifier onlyHandler() {
-        require(isHandler[msg.sender], "StakerBind: forbidden");
+        require(isHandler[msg.sender], "Staker: forbidden");
         _;
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
+        _disableInitializers();
+    }
+
+    function initialize() public initializer {
         admin = msg.sender;
         isHandler[msg.sender] = true;
     }
@@ -46,7 +49,7 @@ contract StakerBind {
      * @dev Set Admin
      */
     function setAdmin(address _newAdmin) external onlyAdmin {
-        require(_newAdmin != address(0), "StakerBind: invalid new admin");
+        require(_newAdmin != address(0), "Staker: invalid new admin");
         admin = _newAdmin;
     }
 
@@ -54,7 +57,7 @@ contract StakerBind {
      * @dev Set handler
      */
     function setHandler(address _handler, bool _isActive) public onlyAdmin {
-        require(_handler != address(0), "StakerBind: invalid handler");
+        require(_handler != address(0), "Staker: invalid handler");
         isHandler[_handler] = _isActive;
     }
 
@@ -69,7 +72,7 @@ contract StakerBind {
     ) public {
         require(
             bytes(atlanticAddress).length > 0,
-            "StakerBind: The atlantic address is empty"
+            "Staker: The atlantic address is empty"
         );
 
         address signer = _recoverSigner(
@@ -83,12 +86,12 @@ contract StakerBind {
         // Make sure the signature is signed by the handler
         require(
             isHandler[signer],
-            "StakerBind: Only handler can sign the signature"
+            "Staker: Only handler can sign the signature"
         );
 
         require(
             nonce > atlanticAddressNonce[atlanticAddress],
-            "StakerBind: The nonce is expired"
+            "Staker: The nonce is expired"
         );
 
         atlanticAddressToPacificAddress[atlanticAddress] = pacificAddress;
@@ -158,14 +161,14 @@ contract StakerBind {
     // query bound relations by atlantic address
     function getRecordByAtlanticAddress(
         string memory atlanticAddress
-    ) external view returns (address) {
+    ) public view returns (address) {
         return atlanticAddressToPacificAddress[atlanticAddress];
     }
 
     // query account nonceby atlantic address
     function getNonceByAtlanticAddress(
         string memory atlanticAddress
-    ) external view returns (uint32) {
+    ) public view returns (uint32) {
         return atlanticAddressNonce[atlanticAddress];
     }
 }
