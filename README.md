@@ -7,3 +7,27 @@
 ```
 npx hardhat compile
 ```
+
+#### Run test cases
+
+```
+npx hardhat test
+```
+
+#### Deploy to Manta Pacific Testnet
+
+```
+npx hardhat run scripts/deploy.ts --network pacific-testnet
+```
+
+#### Verify contract
+
+```
+npx hardhat run scripts/verifyContract.ts --network pacific-testnet
+```
+
+#### Set handler
+
+```
+npx hardhat run scripts/setHandler.ts --network pacific-testnet
+```

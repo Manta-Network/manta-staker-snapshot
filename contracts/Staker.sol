@@ -35,6 +35,11 @@ contract Staker is Initializable {
         _;
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize() public initializer {
         admin = msg.sender;
         isHandler[msg.sender] = true;

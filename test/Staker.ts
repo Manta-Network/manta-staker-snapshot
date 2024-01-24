@@ -9,7 +9,7 @@ import { Staker } from "../typechain";
 
 const testAtlanticAddress = "dfabGCMsPPryBnXEkJK64wx5VDRFb1YM5DXxEyinZHrQ1qbHB";
 
-describe("Staker Bind", function () {
+describe("Staker Contract", function () {
   async function deployStaker() {
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
 
@@ -28,6 +28,8 @@ describe("Staker Bind", function () {
     const { hardhatStaker, owner, addr1, addr2 } = await loadFixture(
       deployStaker
     );
+
+    expect(await hardhatStaker.admin()).to.be.equal(owner.address);
 
     await expect(
       hardhatStaker.connect(owner).setAdmin(ZeroAddress)

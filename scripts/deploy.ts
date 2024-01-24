@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { Staker } from "../typechain";
 
 async function main() {
@@ -6,9 +6,15 @@ async function main() {
 
   console.log("Deploying contracts with the account:", deployer.address);
 
-  const stakerContract = await ethers.deployContract("Staker");
+  // deploy staker contract
+  const StakerFactory = await ethers.getContractFactory("Staker", deployer);
+  const stakerInstance = (await upgrades.deployProxy(StakerFactory, [], {
+    initializer: "initialize",
+  })) as any as Staker;
 
-  console.log("Staker address:", await stakerContract.getAddress());
+  await stakerInstance.waitForDeployment();
+
+  console.log("Staker deployed, address: ", await stakerInstance.getAddress());
 }
 
 main()
