@@ -5,135 +5,154 @@ pragma solidity ^0.8.0;
 
 contract StakerBind {
     // An address type variable is used to store ethereum accounts.
-    address public owner;
+    address public admin;
+    mapping(address => bool) public isHandler;
 
     struct AtlanticAddress {
         string atlanticAddress;
     }
 
-    // pacific address => [atlantic address]
-    mapping(address => AtlanticAddress[]) pacificAddressToAtlanticAddress;
-
     // atlantic address => pacific address
     mapping(string => address) atlanticAddressToPacificAddress;
 
+    // atlantic address => account nonce
+    mapping(string => uint32) atlanticAddressNonce;
+
+    bytes32 private constant DOMAIN_SEPARATOR_TYPEHASH =
+        0x47e79534a245952e8b16893a336b85a3d9ea9fa8c573f3d803afb92a79469218;
+
     // bind event
     event BindPacificAddress(
-        address indexed pacificAddress,
-        string indexedAtlanticAddress
+        string indexed AtlanticAddress,
+        address indexed pacificAddress
     );
 
-    // unbind event
-    event UnbindPacificAddress(
-        address indexed pacificAddress,
-        string indexedAtlanticAddress
-    );
+    modifier onlyAdmin() {
+        require(admin == msg.sender, "StakerBind: Only Admin");
+        _;
+    }
+
+    modifier onlyHandler() {
+        require(isHandler[msg.sender], "StakerBind: forbidden");
+        _;
+    }
 
     constructor() {
-        owner = msg.sender;
+        admin = msg.sender;
+        isHandler[msg.sender] = true;
+    }
+
+    /**
+     * @dev Set Admin
+     */
+    function setAdmin(address _newAdmin) external onlyAdmin {
+        require(_newAdmin != address(0), "StakerBind: invalid new admin");
+        admin = _newAdmin;
+    }
+
+    /**
+     * @dev Set handler
+     */
+    function setHandler(address _handler, bool _isActive) public onlyAdmin {
+        require(_handler != address(0), "StakerBind: invalid handler");
+        isHandler[_handler] = _isActive;
     }
 
     // bind pacific address to atlantic address
-    function bindAtlanticAddress(string memory newAtlanticAddress) external {
-        require(
-            bytes(newAtlanticAddress).length > 0,
-            "The atlantic address is empty"
-        );
-
-        address pacificAddress = msg.sender;
-        AtlanticAddress[]
-            memory currentAtlanticAddress = pacificAddressToAtlanticAddress[
-                pacificAddress
-            ];
-        if (currentAtlanticAddress.length > 0) {
-            // The Pacific address is already bound to atlantic address
-            bool isAtlanticAddressExists = false;
-            for (uint i = 0; i < currentAtlanticAddress.length; i++) {
-                // compare atlanticAddress is exits or not
-                if (
-                    keccak256(
-                        abi.encodePacked(
-                            currentAtlanticAddress[i].atlanticAddress
-                        )
-                    ) == keccak256(abi.encodePacked(newAtlanticAddress))
-                ) {
-                    isAtlanticAddressExists = true;
-                    break;
-                }
-            }
-
-            // bind not exists atlantic address
-            if (!isAtlanticAddressExists) {
-                _bindNewAtlanticAddress(pacificAddress, newAtlanticAddress);
-            }
-        } else {
-            // The Pacific address is not bound to any address
-            _bindNewAtlanticAddress(pacificAddress, newAtlanticAddress);
-        }
-    }
-
-    // bind new atlantic address
-    function _bindNewAtlanticAddress(
+    function bindPacificAddress(
+        string memory atlanticAddress,
         address pacificAddress,
-        string memory atlanticAddress
-    ) internal {
-        // add new bind record
-        pacificAddressToAtlanticAddress[pacificAddress].push(
-            AtlanticAddress(atlanticAddress)
+        uint32 nonce,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) public {
+        require(
+            bytes(atlanticAddress).length > 0,
+            "StakerBind: The atlantic address is empty"
         );
+
+        address signer = _recoverSigner(
+            atlanticAddress,
+            pacificAddress,
+            nonce,
+            _v,
+            _r,
+            _s
+        );
+        // Make sure the signature is signed by the handler
+        require(
+            isHandler[signer],
+            "StakerBind: Only handler can sign the signature"
+        );
+
+        require(
+            nonce > atlanticAddressNonce[atlanticAddress],
+            "StakerBind: The nonce is expired"
+        );
+
         atlanticAddressToPacificAddress[atlanticAddress] = pacificAddress;
-        emit BindPacificAddress(pacificAddress, atlanticAddress);
+        atlanticAddressNonce[atlanticAddress] = nonce;
+
+        emit BindPacificAddress(atlanticAddress, pacificAddress);
     }
 
-    //unbind atalantic address
-    function unbindAtlanticAddress(string memory newAtlanticAddress) external {
-        require(
-            bytes(newAtlanticAddress).length > 0,
-            "The atlantic address is empty"
+    /**
+     * @dev Recover signer
+     */
+    function _recoverSigner(
+        string memory atlanticAddress,
+        address pacificAddress,
+        uint nonce,
+        uint8 _v,
+        bytes32 _r,
+        bytes32 _s
+    ) private view returns (address) {
+        // Concat the message
+        bytes memory dataContent = abi.encode(
+            atlanticAddress,
+            pacificAddress,
+            nonce
         );
 
-        address pacificAddress = msg.sender;
-        require(
-            pacificAddressToAtlanticAddress[pacificAddress].length > 0,
-            "The sender is not bound to any atlantic address"
+        bytes32 dataHash = keccak256(
+            abi.encodePacked(
+                bytes1(0x19),
+                bytes1(0x01),
+                domainSeparator(),
+                keccak256(dataContent)
+            )
         );
 
-        // remove record by pacific address
-        AtlanticAddress[]
-            memory currentAtlanticAddress = pacificAddressToAtlanticAddress[
-                pacificAddress
-            ];
-        uint addressLength = currentAtlanticAddress.length;
-        for (uint i = 0; i < currentAtlanticAddress.length; i++) {
-            // compare atlanticAddress is exits or not
-            if (
+        return
+            ecrecover(
                 keccak256(
-                    abi.encodePacked(currentAtlanticAddress[i].atlanticAddress)
-                ) == keccak256(abi.encodePacked(newAtlanticAddress))
-            ) {
-                // switch it with the last element of an array
-                // remove last element
-                pacificAddressToAtlanticAddress[pacificAddress][
-                    i
-                ] = pacificAddressToAtlanticAddress[pacificAddress][
-                    addressLength - 1
-                ];
-                pacificAddressToAtlanticAddress[pacificAddress].pop();
-                break;
-            }
+                    abi.encodePacked(
+                        "\x19Ethereum Signed Message:\n32",
+                        dataHash
+                    )
+                ),
+                _v,
+                _r,
+                _s
+            );
+    }
+
+    /**
+     * @dev Returns the domain separator for this contract, as defined in the EIP-712 standard.
+     * @return bytes32 The domain separator hash.
+     */
+    function domainSeparator() public view returns (bytes32) {
+        uint256 chainId;
+        /* solhint-disable no-inline-assembly */
+        /// @solidity memory-safe-assembly
+        assembly {
+            chainId := chainid()
         }
 
-        // remove record by atlantic address
-        delete atlanticAddressToPacificAddress[newAtlanticAddress];
+        /* solhint-enable no-inline-assembly */
 
-        emit UnbindPacificAddress(pacificAddress, newAtlanticAddress);
-    }
-
-    // query bound relations by pacific address
-    function getRecordByPacificAddress(
-        address pacificAddress
-    ) external view returns (AtlanticAddress[] memory) {
-        return pacificAddressToAtlanticAddress[pacificAddress];
+        return keccak256(abi.encode(DOMAIN_SEPARATOR_TYPEHASH, chainId, this));
     }
 
     // query bound relations by atlantic address
@@ -141,5 +160,12 @@ contract StakerBind {
         string memory atlanticAddress
     ) external view returns (address) {
         return atlanticAddressToPacificAddress[atlanticAddress];
+    }
+
+    // query account nonceby atlantic address
+    function getNonceByAtlanticAddress(
+        string memory atlanticAddress
+    ) external view returns (uint32) {
+        return atlanticAddressNonce[atlanticAddress];
     }
 }
