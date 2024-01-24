@@ -1,23 +1,20 @@
 import { ethers } from "hardhat";
-import { StakerBind } from "../typechain";
+import { Staker } from "../typechain";
 
 async function main() {
   const [admin] = await ethers.getSigners();
 
-  const stakerBindFactory = await ethers.getContractFactory("StakerBind");
+  const stakerContractFactory = await ethers.getContractFactory("Staker");
 
-  stakerBindFactory.connect(admin);
+  stakerContractFactory.connect(admin);
 
-  const contract = await stakerBindFactory.attach(
+  const contract = await stakerContractFactory.attach(
     "0xd5CF9915C7de4Bf11Ed5B5450D40407892cB4ffE" // The deployed contract address
   );
 
   console.log(contract);
 
-  await sendTxn(
-    contract.setHandler(admin.address, true),
-    "set StakerBind handler"
-  );
+  await sendTxn(contract.setHandler(admin.address, true), "set Staker handler");
 }
 
 main();

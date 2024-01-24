@@ -7,15 +7,15 @@ const path = require("path");
 
 /**
  *
- * @param handler handler of StakerBind
+ * @param handler handler of Staker
  * @param atlanticAddress atlantic address
  * @param pacificAddress pacific address
- * @param nonce account nonce on StakerBind
+ * @param nonce account nonce on Staker
  * @param chainId chain id
  * @param contractAddress AirdropController address
  * @returns
  */
-export async function generateStakerBindSignature(
+export async function generateStakerSignature(
   handler: HardhatEthersSigner,
   atlanticAddress: string,
   pacificAddress: string,
