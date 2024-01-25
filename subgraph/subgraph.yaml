@@ -7,9 +7,9 @@ dataSources:
     name: Staker
     network: manta-pacific-testnet
     source:
-      address: "0x3AFc3061d4F487ab9C469BfDbfcf4B5a1dCa3657"
+      address: "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc"
       abi: Staker
-      startBlock: 1765929
+      startBlock: 1775898
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
