@@ -12,7 +12,7 @@
         "type": "string"
       },
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "pacificAddress",
         "type": "address"

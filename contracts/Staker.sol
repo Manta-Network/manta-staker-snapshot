@@ -20,7 +20,10 @@ contract Staker is Initializable {
         0x47e79534a245952e8b16893a336b85a3d9ea9fa8c573f3d803afb92a79469218;
 
     // bind event
-    event BindPacificAddress(string atlanticAddress, address pacificAddress);
+    event BindPacificAddress(
+        string atlanticAddress,
+        address indexed pacificAddress
+    );
 
     modifier onlyAdmin() {
         require(admin == msg.sender, "Staker: Only Admin");
