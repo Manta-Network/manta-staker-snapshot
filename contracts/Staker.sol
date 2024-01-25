@@ -22,8 +22,7 @@ contract Staker is Initializable {
     // bind event
     event BindPacificAddress(
         string indexed atlanticAddress,
-        address indexed pacificAddress,
-        uint256 blockNumber
+        address indexed pacificAddress
     );
 
     modifier onlyAdmin() {
@@ -98,7 +97,7 @@ contract Staker is Initializable {
         atlanticAddressToPacificAddress[atlanticAddress] = pacificAddress;
         atlanticAddressNonce[atlanticAddress] = nonce;
 
-        emit BindPacificAddress(atlanticAddress, pacificAddress, block.number);
+        emit BindPacificAddress(atlanticAddress, pacificAddress);
     }
 
     /**

@@ -16,12 +16,6 @@
         "internalType": "address",
         "name": "pacificAddress",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "blockNumber",
-        "type": "uint256"
       }
     ],
     "name": "BindPacificAddress",

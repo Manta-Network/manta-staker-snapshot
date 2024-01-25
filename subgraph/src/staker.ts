@@ -10,7 +10,6 @@ export function handleBindPacificAddress(event: BindPacificAddressEvent): void {
   )
   entity.atlanticAddress = event.params.atlanticAddress
   entity.pacificAddress = event.params.pacificAddress
-  entity.blockNumber = event.params.blockNumber
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

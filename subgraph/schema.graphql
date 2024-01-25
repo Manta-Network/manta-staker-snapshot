@@ -2,7 +2,6 @@ type BindPacificAddress @entity(immutable: true) {
   id: Bytes!
   atlanticAddress: String! # string
   pacificAddress: Bytes! # address
-  blockNumber: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

@@ -4,8 +4,7 @@ import { BindPacificAddress, Initialized } from "../generated/Staker/Staker"
 
 export function createBindPacificAddressEvent(
   atlanticAddress: string,
-  pacificAddress: Address,
-  blockNumber: BigInt
+  pacificAddress: Address
 ): BindPacificAddress {
   let bindPacificAddressEvent = changetype<BindPacificAddress>(newMockEvent())
 
@@ -21,12 +20,6 @@ export function createBindPacificAddressEvent(
     new ethereum.EventParam(
       "pacificAddress",
       ethereum.Value.fromAddress(pacificAddress)
-    )
-  )
-  bindPacificAddressEvent.parameters.push(
-    new ethereum.EventParam(
-      "blockNumber",
-      ethereum.Value.fromUnsignedBigInt(blockNumber)
     )
   )
 

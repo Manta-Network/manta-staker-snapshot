@@ -2,6 +2,10 @@ node_modules/*
 cache/*
 artifacts/
 
+subgraph/staker/generated
+subgraph/staker/node_modules
+subgraph/staker/tests
+
 .env
 .vscode
 .idea
