@@ -1,7 +1,7 @@
 type BindPacificAddress @entity(immutable: true) {
   id: Bytes!
-  atlanticAddress: String! # string
   pacificAddress: Bytes! # address
+  atlanticAddress: String! # string
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

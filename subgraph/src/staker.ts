@@ -8,8 +8,8 @@ export function handleBindPacificAddress(event: BindPacificAddressEvent): void {
   let entity = new BindPacificAddress(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
-  entity.atlanticAddress = event.params.atlanticAddress
   entity.pacificAddress = event.params.pacificAddress
+  entity.atlanticAddress = event.params.atlanticAddress
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

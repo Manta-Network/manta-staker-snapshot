@@ -17,13 +17,13 @@ import { createBindPacificAddressEvent } from "./staker-utils"
 
 describe("Describe entity assertions", () => {
   beforeAll(() => {
-    let atlanticAddress = "Example string value"
     let pacificAddress = Address.fromString(
       "0x0000000000000000000000000000000000000001"
     )
+    let atlanticAddress = "Example string value"
     let newBindPacificAddressEvent = createBindPacificAddressEvent(
-      atlanticAddress,
-      pacificAddress
+      pacificAddress,
+      atlanticAddress
     )
     handleBindPacificAddress(newBindPacificAddressEvent)
   })
@@ -42,14 +42,14 @@ describe("Describe entity assertions", () => {
     assert.fieldEquals(
       "BindPacificAddress",
       "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
-      "atlanticAddress",
-      "Example string value"
+      "pacificAddress",
+      "0x0000000000000000000000000000000000000001"
     )
     assert.fieldEquals(
       "BindPacificAddress",
       "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
-      "pacificAddress",
-      "0x0000000000000000000000000000000000000001"
+      "atlanticAddress",
+      "Example string value"
     )
 
     // More assert options:

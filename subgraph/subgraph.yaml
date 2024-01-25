@@ -22,7 +22,7 @@ dataSources:
         - name: Staker
           file: ./abis/Staker.json
       eventHandlers:
-        - event: BindPacificAddress(string,indexed address)
+        - event: BindPacificAddress(indexed address,string)
           handler: handleBindPacificAddress
         - event: Initialized(uint64)
           handler: handleInitialized
