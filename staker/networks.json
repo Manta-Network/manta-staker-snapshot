@@ -1,0 +1,8 @@
+{
+  "goerli": {
+    "Staker": {
+      "address": "0x3AFc3061d4F487ab9C469BfDbfcf4B5a1dCa3657",
+      "startBlock": 1765929
+    }
+  }
+}
