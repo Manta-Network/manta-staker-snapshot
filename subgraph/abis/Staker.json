@@ -6,13 +6,13 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "string",
         "name": "atlanticAddress",
         "type": "string"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
         "name": "pacificAddress",
         "type": "address"

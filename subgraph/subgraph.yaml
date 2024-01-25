@@ -1,11 +1,12 @@
-specVersion: 0.0.4
-description: Atlantic Staker Bind Pacific address
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum/contract
+  - kind: ethereum
     name: Staker
-    network: manta-pacific-testnet
+    network: goerli
     source:
       address: "0x3AFc3061d4F487ab9C469BfDbfcf4B5a1dCa3657"
       abi: Staker
@@ -21,7 +22,7 @@ dataSources:
         - name: Staker
           file: ./abis/Staker.json
       eventHandlers:
-        - event: BindPacificAddress(indexed string,indexed address)
+        - event: BindPacificAddress(string,address)
           handler: handleBindPacificAddress
         - event: Initialized(uint64)
           handler: handleInitialized
