@@ -9,10 +9,8 @@ async function main() {
   stakerContractFactory.connect(deployer);
 
   const contract = await stakerContractFactory.attach(
-    "0x3AFc3061d4F487ab9C469BfDbfcf4B5a1dCa3657" // The deployed Staker contract address
+    "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc" // The deployed Staker contract address
   );
-
-  console.log(contract);
 
   await sendTxn(
     contract.setHandler(deployer.address, true),

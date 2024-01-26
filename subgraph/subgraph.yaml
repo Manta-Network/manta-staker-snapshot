@@ -1,0 +1,28 @@
+specVersion: 0.0.4
+description: Atlantic Staker Bind Pacific address
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Staker
+    network: manta-pacific-testnet
+    source:
+      address: "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc"
+      abi: Staker
+      startBlock: 1775898
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BindPacificAddress
+        - Initialized
+      abis:
+        - name: Staker
+          file: ./abis/Staker.json
+      eventHandlers:
+        - event: BindPacificAddress(indexed address,string)
+          handler: handleBindPacificAddress
+        - event: Initialized(uint64)
+          handler: handleInitialized
+      file: ./src/staker.ts

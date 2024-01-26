@@ -2,6 +2,11 @@ node_modules/*
 cache/*
 artifacts/
 
+subgraph/generated
+subgraph/node_modules
+subgraph/tests
+subgraph/build
+
 .env
 .vscode
 .idea

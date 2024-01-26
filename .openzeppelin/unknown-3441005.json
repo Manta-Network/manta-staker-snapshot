@@ -1,142 +1,15 @@
 {
   "manifestVersion": "3.2",
   "admin": {
-    "address": "0xce1D9DC620743358de169782410138382A322dAB",
-    "txHash": "0x6357cf682125bd491c6da6b2e0abe38a49bee122bea6bfebac6116a717c0bdb1"
+    "address": "0xfff4e1C41EaEdc6AD1929C69274ab70F9db9AD33",
+    "txHash": "0xca9e1dfb1c0082cb078905176f778de824d5821e9524bdae63749507de537363"
   },
   "proxies": [
     {
-      "address": "0x3AFc3061d4F487ab9C469BfDbfcf4B5a1dCa3657",
-      "txHash": "0xd1724fbae534014f1dc03b75f1c5ff9729871e8b95696b353a699ead5f0a17af",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x400f4961BD41dC14d85b486231b5ca647A81f987",
-      "txHash": "0x92bdf6b88d645bf56fb24b08d26ec3077cd2f0ac1229e52bca34b3e9e822ff0e",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xa18A21d35d1F1518f9e2A2B24adcf3ec0ff9F4d3",
-      "txHash": "0x2442538c28c2dc872fd415a1503c1586e4119f5b885f9851aa3d74b412979196",
+      "address": "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc",
+      "txHash": "0x6255f951956d4a0133e015d16662c6f07b836ab55d6d8c41e8ec0d850d097d5b",
       "kind": "transparent"
     }
   ],
-  "impls": {
-    "b8247e19d73b2865101795491b4ce59ea4ef21af80d3585a741a84634711cdb8": {
-      "address": "0x44bA5de18C3E3E3DED88CD0c85e8f8e58Df38441",
-      "txHash": "0x021040fd2973011b7abaeffae70ca63b620d57d43a045ad94776520ec1510601",
-      "layout": {
-        "solcVersion": "0.8.20",
-        "storage": [
-          {
-            "label": "admin",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_address",
-            "contract": "Staker",
-            "src": "contracts/Staker.sol:10"
-          },
-          {
-            "label": "isHandler",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_mapping(t_address,t_bool)",
-            "contract": "Staker",
-            "src": "contracts/Staker.sol:11"
-          },
-          {
-            "label": "atlanticAddressToPacificAddress",
-            "offset": 0,
-            "slot": "2",
-            "type": "t_mapping(t_string_memory_ptr,t_address)",
-            "contract": "Staker",
-            "src": "contracts/Staker.sol:14"
-          },
-          {
-            "label": "atlanticAddressNonce",
-            "offset": 0,
-            "slot": "3",
-            "type": "t_mapping(t_string_memory_ptr,t_uint32)",
-            "contract": "Staker",
-            "src": "contracts/Staker.sol:17"
-          }
-        ],
-        "types": {
-          "t_bool": {
-            "label": "bool",
-            "numberOfBytes": "1"
-          },
-          "t_struct(InitializableStorage)10_storage": {
-            "label": "struct Initializable.InitializableStorage",
-            "members": [
-              {
-                "label": "_initialized",
-                "type": "t_uint64",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "_initializing",
-                "type": "t_bool",
-                "offset": 8,
-                "slot": "0"
-              }
-            ],
-            "numberOfBytes": "32"
-          },
-          "t_uint64": {
-            "label": "uint64",
-            "numberOfBytes": "8"
-          },
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_mapping(t_address,t_bool)": {
-            "label": "mapping(address => bool)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_string_memory_ptr,t_address)": {
-            "label": "mapping(string => address)",
-            "numberOfBytes": "32"
-          },
-          "t_mapping(t_string_memory_ptr,t_uint32)": {
-            "label": "mapping(string => uint32)",
-            "numberOfBytes": "32"
-          },
-          "t_string_memory_ptr": {
-            "label": "string",
-            "numberOfBytes": "32"
-          },
-          "t_uint32": {
-            "label": "uint32",
-            "numberOfBytes": "4"
-          },
-          "t_string_storage": {
-            "label": "string"
-          }
-        },
-        "namespaces": {
-          "erc7201:openzeppelin.storage.Initializable": [
-            {
-              "contract": "Initializable",
-              "label": "_initialized",
-              "type": "t_uint64",
-              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
-              "offset": 0,
-              "slot": "0"
-            },
-            {
-              "contract": "Initializable",
-              "label": "_initializing",
-              "type": "t_bool",
-              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
-              "offset": 8,
-              "slot": "0"
-            }
-          ]
-        }
-      }
-    }
-  }
+  "impls": {}
 }

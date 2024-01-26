@@ -1,0 +1,9 @@
+{
+  "manta-pacific-testnet": {
+    "Staker": {
+      "address": "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc",
+      "startBlock": 1775898
+
+    }
+  }
+}

@@ -1,0 +1,16 @@
+type BindPacificAddress @entity(immutable: true) {
+  id: Bytes!
+  pacificAddress: Bytes! # address
+  atlanticAddress: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Initialized @entity(immutable: true) {
+  id: Bytes!
+  version: BigInt! # uint64
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
