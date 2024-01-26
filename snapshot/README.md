@@ -1,4 +1,4 @@
-# Generate snapshot for atlantic stakers
+# Generate snapshot for Manta Atlantic stakers
 
 ### Install Node.js packages
 
@@ -6,7 +6,7 @@
 yarn
 ```
 
-### Update snapshotBlockNumber of index.mjs
+### Update snapshotBlockNumber of file index.mjs
 
 ```
 const snapshotBlockNumber = 1204059;
