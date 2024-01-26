@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@polkadot/api": "^10.11.2",
     "node-fetch": "^3.3.2"
   }
 }
