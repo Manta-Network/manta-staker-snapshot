@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-const snapshotBlockNumber = 1204059;
+const snapshotBlockNumber = 1204500;
 
 let skip = 0;
 let first = 500;
