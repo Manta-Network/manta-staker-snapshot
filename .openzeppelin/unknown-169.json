@@ -1,0 +1,132 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xc16859a781ed115Dd2B91CE88cE385ef3769d55b",
+    "txHash": "0x764dc0dd9d433b8b95266c1edd899db3476910e136f310c1f7a07b2f008574b0"
+  },
+  "proxies": [
+    {
+      "address": "0x656874492A769E4414D57C90891e1b2948C0B21f",
+      "txHash": "0x4041fda5ecbd7a924889cdb9fc8ee3e503d47822e789e1b90cbefbd72263c9d9",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "f41cce1e94488fc3c35bc14307848ffa17ceffcab0027f8a0cd125477f6ba9eb": {
+      "address": "0x52D6f1C63b1F8e251B5F36E5825a4D27a165c5F0",
+      "txHash": "0x3a9d7bc4f5634de4ea6ec235c7191620de8a14dd45c8afc6d0cdfd77a8fe6e63",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "admin",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "Staker",
+            "src": "contracts/Staker.sol:10"
+          },
+          {
+            "label": "isHandler",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "Staker",
+            "src": "contracts/Staker.sol:11"
+          },
+          {
+            "label": "atlanticAddressToPacificAddress",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_string_memory_ptr,t_address)",
+            "contract": "Staker",
+            "src": "contracts/Staker.sol:14"
+          },
+          {
+            "label": "atlanticAddressNonce",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_string_memory_ptr,t_uint32)",
+            "contract": "Staker",
+            "src": "contracts/Staker.sol:17"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)10_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_string_memory_ptr,t_address)": {
+            "label": "mapping(string => address)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_string_memory_ptr,t_uint32)": {
+            "label": "mapping(string => uint32)",
+            "numberOfBytes": "32"
+          },
+          "t_string_memory_ptr": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_uint32": {
+            "label": "uint32",
+            "numberOfBytes": "4"
+          },
+          "t_string_storage": {
+            "label": "string"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
