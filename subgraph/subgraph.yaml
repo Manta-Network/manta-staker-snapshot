@@ -5,11 +5,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Staker
-    network: manta-pacific-testnet
+    network: manta-pacific-mainnet
     source:
-      address: "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc"
+      address: "0x656874492A769E4414D57C90891e1b2948C0B21f"
       abi: Staker
-      startBlock: 1775898
+      startBlock: 1203084
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
