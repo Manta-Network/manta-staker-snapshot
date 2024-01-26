@@ -12,8 +12,10 @@ async function main() {
     "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc" // The deployed Staker contract address
   );
 
+  // set handler address
+  const handlerAddress = deployer.address;
   await sendTxn(
-    contract.setHandler(deployer.address, true),
+    contract.setHandler(handlerAddress, true),
     "set Staker handler"
   );
 }

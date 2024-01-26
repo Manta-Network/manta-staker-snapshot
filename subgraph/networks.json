@@ -1,4 +1,11 @@
 {
+  "manta-pacific-mainnet": {
+    "Staker": {
+      "address": "0x656874492A769E4414D57C90891e1b2948C0B21f",
+      "startBlock": 1203084
+
+    }
+  },
   "manta-pacific-testnet": {
     "Staker": {
       "address": "0x6381c9ac6FaBbC88f33F754B5D264Ca578Fe5ABc",
