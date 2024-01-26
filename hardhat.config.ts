@@ -24,14 +24,21 @@ const config: HardhatUserConfig = {
   networks: {
     "pacific-testnet": {
       chainId: 3441005,
-      url: process.env.MANTA_PACIFIC_RPC as string,
-      accounts: [process.env.DEPLOYER_KEY as string],
+      url: process.env.MANTA_PACIFIC_TESTNET_RPC as string,
+      accounts: [process.env.TESTNET_DEPLOYER_KEY as string],
+      gas: parseInt(process.env.GASLIMIT as string),
+    },
+    "pacific-mainnet": {
+      chainId: 169,
+      url: process.env.MANTA_PACIFIC_MAINNET_RPC as string,
+      accounts: [process.env.MAINNET_DEPLOYER_KEY as string],
       gas: parseInt(process.env.GASLIMIT as string),
     },
   },
   etherscan: {
     apiKey: {
       "pacific-testnet": "abc",
+      "pacific-mainnet": "abc",
     },
     customChains: [
       {
@@ -40,6 +47,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://manta-testnet.calderaexplorer.xyz/api",
           browserURL: "https://manta-testnet.calderaexplorer.xyz/",
+        },
+      },
+      {
+        network: "pacific-mainnet",
+        chainId: 169,
+        urls: {
+          apiURL: "https://manta-pacific.calderaexplorer.xyz/api",
+          browserURL: "https://manta-pacific.calderaexplorer.xyz/",
         },
       },
     ],
