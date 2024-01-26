@@ -9,7 +9,7 @@ let bindRecords = {};
 const writeStream = fs.createWriteStream("./snapshot.csv", { encoding: "utf-8" });
 
 writeStream.on("open", async () => {
-  writeStream.write("pacificAddress, atlanticAddress,stakedBlockNumber\n", "utf-8");
+  writeStream.write("pacificAddress,atlanticAddress,stakedBlockNumber\n", "utf-8");
   queryStakedRecord();
 });
 
@@ -56,8 +56,8 @@ async function queryStakedRecord() {
     // save bind record into file
     for (const [key, value] of Object.entries(bindRecords)) {
       const records = [];
-      records.push(value.atlanticAddress);
       records.push(value.pacificAddress);
+      records.push(value.atlanticAddress);
       records.push(value.blockNumber);
 
       const toString = records.join(",")
