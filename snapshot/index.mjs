@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-const snapshotBlockNumber = 1204500;
+const snapshotBlockNumber = 1227264;
 
 let skip = 0;
 let first = 500;
@@ -90,7 +90,7 @@ async function queryStakedRecord(api, writeStream) {
   // fetch next records
   if (records.length == first) {
     skip = 500 + skip;
-    await queryStakedRecord();
+    await queryStakedRecord(api, writeStream);
   } else {
     // save bind record into file
     for (const [key, value] of Object.entries(bindRecords)) {
@@ -105,6 +105,7 @@ async function queryStakedRecord(api, writeStream) {
       writeStream.write(toString + "\n", "utf-8");
     }
     console.log(`snapshot records saved into snapshot.csv`);
+    writeStream.end();
     await api.disconnect();
   }
 }
