@@ -2,11 +2,12 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
-const snapshotBlockNumber = 1227264;
+const snapshotBlockNumber = 1393252;
 
 let skip = 0;
 let first = 500;
 let bindRecords = {};
+const fileName = `./snapshot-block-${snapshotBlockNumber}.csv`;
 
 const main = async () => {
   // Construct API provider
@@ -14,7 +15,7 @@ const main = async () => {
   const api = await ApiPromise.create({ provider: wsProvider, noInitWarn: true });
 
   // generate snapshot file
-  const writeStream = fs.createWriteStream("./snapshot.csv", { encoding: "utf-8" });
+  const writeStream = fs.createWriteStream(fileName, { encoding: "utf-8" });
 
   writeStream.on("open", async () => {
     writeStream.write("pacificAddress,atlanticAddress,bindBlockNumber,stakingAmount\n", "utf-8");
@@ -104,7 +105,7 @@ async function queryStakedRecord(api, writeStream) {
 
       writeStream.write(toString + "\n", "utf-8");
     }
-    console.log(`snapshot records saved into snapshot.csv`);
+    console.log(`snapshot records saved into ${fileName}`);
     writeStream.end();
     await api.disconnect();
   }
