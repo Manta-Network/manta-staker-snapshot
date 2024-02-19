@@ -1,8 +1,9 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import {ethers} from "ethers";
 
-const snapshotBlockNumber = 1393252;
+const snapshotBlockNumber = 1412658;
 
 let skip = 0;
 let first = 500;
@@ -96,7 +97,7 @@ async function queryStakedRecord(api, writeStream) {
     // save bind record into file
     for (const [key, value] of Object.entries(bindRecords)) {
       const records = [];
-      records.push(value.pacificAddress);
+      records.push(ethers.utils.getAddress(value.pacificAddress));
       records.push(value.atlanticAddress);
       records.push(value.blockNumber);
       records.push(value.stakingAmount);
