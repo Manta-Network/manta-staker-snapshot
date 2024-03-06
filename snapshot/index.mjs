@@ -3,7 +3,7 @@ import fs from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { getAddress } from "ethers";
 
-const snapshotBlockNumber = 2341450;
+const snapshotBlockNumber = 1548429;
 const MINIMUM_STAKING_AMOUNT = 1;
 
 let skip = 0;
