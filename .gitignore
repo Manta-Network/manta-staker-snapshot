@@ -8,7 +8,7 @@ subgraph/tests
 subgraph/build
 
 snapshot/node_modules
-snapshot/snapshot.csv
+snapshot/snapshot*.csv
 
 .env
 .vscode
