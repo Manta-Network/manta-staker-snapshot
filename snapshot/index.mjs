@@ -2,9 +2,10 @@ import fetch from 'node-fetch';
 import fs from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { getAddress } from "ethers";
+import { encodeAddress } from '@polkadot/util-crypto';
 
-const snapshotBlockNumber = 1548429;
-const MINIMUM_STAKING_AMOUNT = 1;
+const snapshotBlockNumber = 2449361;
+const MINIMUM_STAKING_AMOUNT = 500;
 
 let skip = 0;
 let first = 500;
@@ -62,7 +63,9 @@ async function queryStakedRecord(api, writeStream) {
   records.map((item) => {
     if (item.blockNumber <= snapshotBlockNumber) {
       item.stakingAmount = 0;
-      bindRecords[item.atlanticAddress] = item;
+      // convert atlantic address to manta format address (SS58 prefix: 77)
+      const atlanticAddress = encodeAddress(item.atlanticAddress, 77);
+      bindRecords[atlanticAddress] = item;
     }
   })
 
@@ -97,10 +100,10 @@ async function queryStakedRecord(api, writeStream) {
   } else {
     // save bind record into file
     for (const [key, value] of Object.entries(bindRecords)) {
-      if (value.stakingAmount >= MINIMUM_STAKING_AMOUNT) {
+      if (value.stakingAmount >= MINIMUM_STAKING_AMOUNT && value.pacificAddress != '0x0000000000000000000000000000000000000000') {
         const records = [];
-        records.push(getAddress(value.pacificAddress));
         records.push(value.atlanticAddress);
+        records.push(getAddress(value.pacificAddress));
         records.push(value.blockNumber);
         records.push(value.stakingAmount);
 
